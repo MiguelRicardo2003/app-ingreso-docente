@@ -140,57 +140,6 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
         objetoConexion.cerrarConexion();
     }
 }
-   /* public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
-        conexion objetoConexion = new conexion();
-        String sql = "SELECT * FROM horario";
-        Statement st;
-        try {
-            st = objetoConexion.conectar().createStatement();
-            ResultSet rs = st.executeQuery(sql);
-            cmb_horarioasignacion.removeAllItems();
-            while (rs.next()) {
-                String nombreHorario = rs.getString("descripcion");
-                this.establecerIdHorario(rs.getInt("id_horario"));
-                cmb_horarioasignacion.addItem(nombreHorario);
-                cmb_horarioasignacion.putClientProperty(nombreHorario, idHorario);
-            }
-           
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al mostrar horario: " + e.toString());
-        } finally {
-            objetoConexion.cerrarConexion();
-        }
-    }
-*/
-    /*public void mostrarHorario(JComboBox cmb_horarioasignacion) {
-    conexion objetoConexion = new conexion();
-    String sql = "SELECT * FROM horario";  // Asegúrate de que la tabla horario tenga las columnas necesarias
-    Statement st;
-
-    try {
-        st = objetoConexion.conectar().createStatement();
-        ResultSet rs = st.executeQuery(sql);
-        cmb_horarioasignacion.removeAllItems();  // Limpiar el JComboBox
-
-        while (rs.next()) {
-            String nombreHorario = rs.getString("dia_semana");
-            String horaInicio = rs.getString("hora_inicio");
-            String horaFin = rs.getString("hora_fin");
-            int idHorario = rs.getInt("id_horario");
-
-            // Concatenar los valores para mostrar en el JComboBox
-            String displayText = nombreHorario + " (" + horaInicio + " - " + horaFin + ")";
-            
-            // Asociar el id_horario con el item en el JComboBox usando setClientProperty
-            cmb_horarioasignacion.addItem(displayText);
-            cmb_horarioasignacion.putClientProperty(displayText, idHorario);  // Guardar el id_horario para el item
-        }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al mostrar horario: " + e.toString());
-    } finally {
-        objetoConexion.cerrarConexion();
-    }
-}*/
 
     public void mostrarAsignatura(JComboBox cmb_asignaturaasignacion) {
         conexion objetoConexion = new conexion();
@@ -734,57 +683,6 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
         cerrarRecursos(rs, pst, conectar);
     }
 }
-
-    /*public void fnt_iniciarSesion(JTextField txt_userlogin, JPasswordField txt_passlogin, JFrame loginFrame) {
-    Connection conectar = null;
-    PreparedStatement pst = null;
-    ResultSet rs = null;
-
-    // Validación de campos vacíos
-    if (!validarCampos(txt_userlogin, txt_passlogin)) {
-        return;
-    }
-
-    String var_userStr = txt_userlogin.getText();
-    String var_passStr = new String(txt_passlogin.getPassword());
-
-    try {
-        // Establecer conexión
-        conectar = new modelo.conexion().conectar();
-
-        // Convertir la contraseña ingresada a MD5 antes de la comparación
-        String var_passMD5 = Utilidades.convertirAMD5(var_passStr);  // Método para convertir a MD5
-
-        // Consulta SQL (corregida con espacio después de Rol)
-        String sql = "SELECT usuario.id_usuario, usuario.contrasenia, usuario.id_rol "
-                    + "FROM usuario "
-                    + "WHERE usuario.id_usuario = ? AND usuario.contrasenia = ?";
-
-        pst = conectar.prepareStatement(sql);
-        pst.setString(1, var_userStr);
-        pst.setString(2, var_passMD5);  // Compara la contraseña en formato MD5
-
-        rs = pst.executeQuery();
-
-        if (rs.next()) {
-            String var_rolStr = rs.getString("id_rol");
-            redirigirSegunRol(var_rolStr, loginFrame);
-        } else {
-            JOptionPane.showMessageDialog(null,
-                    "Usuario o contraseña incorrectos",
-                    "Error de Autenticación",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null,
-                "Error de conexión a la base de datos: " + e.getMessage(),
-                "Error de Conexión",
-                JOptionPane.ERROR_MESSAGE);
-    } finally {
-        cerrarRecursos(rs, pst, conectar);
-    }
-}*/
-
     
     public void fnt_guardarUsuario(JTextField txt_docuser, JTextField txt_nomuser, JTextField txt_apellidouser,
             JDateChooser fnacimientouser, JComboBox cmb_sexouser, JComboBox cmb_roluser,
@@ -868,90 +766,6 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
         }
     }
 }
-
-
-   /* public void fnt_guardarUsuario(JTextField txt_docuser, JTextField txt_nomuser, JTextField txt_apellidouser,
-            JDateChooser fnacimientouser, JComboBox cmb_sexouser, JComboBox cmb_roluser,
-            JComboBox cmb_municipiouser, JTextField txt_telefonouser, JTextField txt_passuser) {
-
-        conexion objetoConexion = new conexion();
-        String consulta_guardar = "INSERT INTO usuario (id_usuario, nombre, apellido, fecha_nac, id_sexo, id_municipio, telefono, id_rol, contrasenia) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
-        PreparedStatement ps = null;
-
-        try {
-            ps = objetoConexion.conectar().prepareStatement(consulta_guardar);
-
-            ps.setInt(1, Integer.parseInt(txt_docuser.getText()));
-            ps.setString(2, txt_nomuser.getText());
-            ps.setString(3, txt_apellidouser.getText());
-
-            Date fechaSeleccionada = fnacimientouser.getDate();
-            if (fechaSeleccionada != null) {
-                java.sql.Date fechasql = new java.sql.Date(fechaSeleccionada.getTime());
-                ps.setDate(4, fechasql);
-            } else {
-                ps.setNull(4, java.sql.Types.DATE); // Manejo del caso nulo
-            }
-
-            String selectedItem = cmb_sexouser.getSelectedItem().toString();
-            int opcSexo = 0;
-            switch (selectedItem) {
-                case "Masculino" ->
-                    opcSexo = 11;
-                case "Femenino" ->
-                    opcSexo = 21;
-            }
-            ps.setInt(5, (opcSexo));
-
-            String selectedItemMunicipio = cmb_municipiouser.getSelectedItem().toString();
-            int opcMunicipio = 0;
-            switch (selectedItemMunicipio) {
-                case "Carepa" ->
-                    opcMunicipio = 1;
-                case "Apartado" ->
-                    opcMunicipio = 2;
-                case "Chigorodo" ->
-                    opcMunicipio = 3;
-                case "Medellin" ->
-                    opcMunicipio = 4;
-                case "Bogota" ->
-                    opcMunicipio = 5;
-                case "Necocli" ->
-                    opcMunicipio = 6;
-                case "Monteria" ->
-                    opcMunicipio = 7;
-            }
-            ps.setInt(6, (opcMunicipio));//municipio
-
-            ps.setString(7, txt_telefonouser.getText());
-
-            String selectedItemRol = cmb_roluser.getSelectedItem().toString();
-            int opcRol = 0;
-            switch (selectedItemRol) {
-                case "Vigilante" ->
-                    opcRol = 1;
-                case "Administrador" ->
-                    opcRol = 2;
-            }
-            ps.setInt(8, (opcRol));//profesion
-            ps.setString(9, txt_passuser.getText());
-
-            ps.executeUpdate(); // Cambiar a executeUpdate para operaciones DML
-            JOptionPane.showMessageDialog(null, "Se guardó el usuario correctamente");
-
-        } catch (SQLException e) {
-            JOptionPane.showInternalMessageDialog(null, "Error al guardar: " + e.getMessage());
-
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close(); // Cerrar el PreparedStatement
-                }
-                objetoConexion.cerrarConexion(); // Cerrar la conexión
-            } catch (SQLException e) {
-            }
-        }
-    }*/
 
     public void fnt_buscarUsuario(JTextField txt_docuser, JTextField txt_nomuser, JTextField txt_apellidouser,
             JDateChooser fnacimientouser, JComboBox cmb_sexouser, JComboBox cmb_roluser,
@@ -1108,96 +922,9 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
             }
             objetoConexion.cerrarConexion(); // Cerrar la conexión
         } catch (SQLException e) {
-            // Manejo de excepción al cerrar la conexión
         }
     }
 }
-
-   /* public void fnt_actualizarUsuario(JTextField txt_docuser, JTextField txt_nomuser, JTextField txt_apellidouser,
-            JDateChooser fnacimientouser, JComboBox cmb_sexouser, JComboBox cmb_roluser,
-            JComboBox cmb_municipiouser, JTextField txt_telefonouser, JTextField txt_passuser) {
-
-        conexion objetoConexion = new conexion();
-        String consulta_actualizar = "UPDATE usuario SET nombre = ?, apellido = ?, fecha_nac = ?, id_sexo = ?, id_municipio = ?, telefono = ?, id_rol = ?, contrasenia = ? WHERE id_usuario = ?";
-        PreparedStatement ps = null;
-
-        try {
-            ps = objetoConexion.conectar().prepareStatement(consulta_actualizar);
-
-            // Asignar los nuevos valores
-            ps.setString(1, txt_nomuser.getText());
-            ps.setString(2, txt_apellidouser.getText());
-
-            Date fechaSeleccionada = fnacimientouser.getDate();
-            if (fechaSeleccionada != null) {
-                java.sql.Date fechasql = new java.sql.Date(fechaSeleccionada.getTime());
-                ps.setDate(3, fechasql);
-            } else {
-                ps.setNull(3, java.sql.Types.DATE); // Manejo del caso nulo
-            }
-
-            String selectedItem = cmb_sexouser.getSelectedItem().toString();
-            int opcSexo = (selectedItem.equals("Masculino")) ? 11 : 21;
-            ps.setInt(4, opcSexo);
-
-            String selectedItemMunicipio = cmb_municipiouser.getSelectedItem().toString();
-            int opcMunicipio = 0;
-            opcMunicipio = switch (selectedItemMunicipio) {
-                case "Carepa" ->
-                    1;
-                case "Apartado" ->
-                    2;
-                case "Chigorodo" ->
-                    3;
-                case "Medellin" ->
-                    4;
-                case "Bogota" ->
-                    5;
-                case "Necocli" ->
-                    6;
-                case "Monteria" ->
-                    7;
-                default ->
-                    0;
-            }; // Opcional: Manejo de un valor por defecto
-            ps.setInt(5, opcMunicipio);
-
-            ps.setString(6, txt_telefonouser.getText());
-
-            String selectedItemRol = cmb_roluser.getSelectedItem().toString();
-            int opcRol = 0;
-            opcRol = switch (selectedItemRol) {
-                case "Vigilante" ->
-                    1;
-                case "Administrador" ->
-                    2;
-                default ->
-                    0;
-            }; // Opcional: Manejo de un valor por defecto
-            ps.setInt(7, opcRol);
-            ps.setString(8, txt_passuser.getText());
-            // Establecer el ID del usuario que se va a actualizar
-            ps.setInt(9, Integer.parseInt(txt_docuser.getText()));
-
-            int filasActualizadas = ps.executeUpdate();
-            if (filasActualizadas > 0) {
-                JOptionPane.showMessageDialog(null, "Datos del usuario actualizados correctamente.");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontraron cambios en el usuario");
-            }
-
-        } catch (SQLException e) {
-            JOptionPane.showInternalMessageDialog(null, "Error al actualizar: " + e.getMessage());
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close(); // Cerrar el PreparedStatement
-                }
-                objetoConexion.cerrarConexion(); // Cerrar la conexión
-            } catch (SQLException e) {
-            }
-        }
-    }*/
 
     public void fnt_eliminarUsuario(JTextField txt_docuser) {
         conexion objetoConexion = new conexion();
@@ -1478,92 +1205,6 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
         }
         return true;
     }
-
-    /*public void fnt_guardarHorario(JTextField txt_id_hor, JTextField txt_descripcionhor, JComboBox cmb_salonhor, JFormattedTextField txt_horainicio, JFormattedTextField txt_horafin) {
-    conexion objetoConexion = new conexion();
-    String consulta_guardar = "INSERT INTO horario (id_horario, dia_semana, hora_inicio, hora_fin, id_salon) VALUES (?, ?, ?, ?, ?)";
-    PreparedStatement ps = null;
-    
-    try {
-        ps = objetoConexion.conectar().prepareStatement(consulta_guardar);
-        ps.setInt(1, Integer.parseInt(txt_id_hor.getText()));
-        ps.setString(2, txt_descripcionhor.getText());
-        
-        // Para hora_inicio y hora_fin en formato de 24 horas
-        java.sql.Time timeInicio = java.sql.Time.valueOf(txt_horainicio.getText());
-        java.sql.Time timeFin = java.sql.Time.valueOf(txt_horafin.getText());
-        
-        ps.setTime(3, timeInicio);
-        ps.setTime(4, timeFin);
-        
-        // Para el salón
-        String selectedItem = cmb_salonhor.getSelectedItem().toString();
-        int opcSalon = 0;
-        switch (selectedItem) {
-            case "P101" -> opcSalon = 101;
-            case "P102" -> opcSalon = 102;
-            case "P103" -> opcSalon = 103;
-            case "P104" -> opcSalon = 104;
-            case "B105" -> opcSalon = 105;
-            case "B106" -> opcSalon = 106;
-            case "B107" -> opcSalon = 107;
-            case "C108" -> opcSalon = 108;
-            default -> JOptionPane.showMessageDialog(null, "La selección no existe en la base de datos");
-        }
-        ps.setInt(5, opcSalon);
-        
-        ps.executeUpdate();
-        JOptionPane.showMessageDialog(null, "Se guardó el horario correctamente");
-        
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al guardar: " + e.getMessage());
-    } finally {
-        try {
-            if (ps != null) ps.close();
-            objetoConexion.cerrarConexion();
-        } catch (SQLException e) {
-            // Manejo de la excepción
-        }
-    }
-}*/
-   /* public boolean fnt_ValidadDisponibilidad(JComboBox cmb_salon, JComboBox cmb_dia, JFormattedTextField txt_hinicio, JFormattedTextField h_fin) {
-        conexion objeto_conexion = new conexion();
-        String query = "SELECT COUNT(*) FROM horario "
-                + "WHERE id_salon = ? AND id_semana = ? AND "
-                + "((hora_inicio < ? AND hora_fin > ?) OR "
-                + "(hora_inicio < ? AND hora_fin > ?) OR "
-                + "(hora_inicio >= ? AND hora_fin <= ?))";
-
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-            java.util.Date parsedHoraInicio = sdf.parse(txt_hinicio.getText());
-            java.util.Date parsedHoraFin = sdf.parse(h_fin.getText());
-
-            java.sql.Time horaInicio = new java.sql.Time(parsedHoraInicio.getTime());
-            java.sql.Time horaFin = new java.sql.Time(parsedHoraFin.getTime());
-
-            PreparedStatement ps = objeto_conexion.conectar().prepareStatement(query);
-            ps.setInt(1, fnt_consultaID("id_salon", "salon", "descripcion", (String) cmb_salon.getSelectedItem()));
-            ps.setInt(2, fnt_consultaID("id_dia", "dia_semana", "nombre", (String) cmb_dia.getSelectedItem()));
-
-            // These parameters check for different overlap scenarios
-            ps.setTime(3, horaInicio);
-            ps.setTime(4, horaInicio);
-            ps.setTime(5, horaFin);
-            ps.setTime(6, horaFin);
-            ps.setTime(7, horaInicio);
-            ps.setTime(8, horaFin);
-
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                int count = rs.getInt(1);
-                return count == 0; // Returns true if no conflicts
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error al validar disponibilidad: " + e.getMessage());
-        }
-        return false;
-    }*/
     
  public boolean fnt_ValidadDisponibilidad(JComboBox<String> cmb_salon, JComboBox<String> cmb_dia, JFormattedTextField txt_hinicio, JFormattedTextField h_fin) {
     conexion objeto_conexion = new conexion();
@@ -1594,21 +1235,20 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
         // Consulta SQL para verificar solapamiento de horarios
         String query = "SELECT COUNT(*) FROM horario " +
                      "WHERE id_salon = ? AND id_semana = ? AND (" +
-                     "(hora_inicio < ? AND hora_fin > ?) OR " +   // Primer caso de solapamiento
-                     "(hora_inicio < ? AND hora_fin > ?) OR " +   // Segundo caso de solapamiento
-                     "(hora_inicio >= ? AND hora_fin <= ?))";    // Tercer caso de solapamiento
+                     "(hora_inicio < ? AND hora_fin > ?) OR " +   
+                     "(hora_inicio < ? AND hora_fin > ?) OR " +   
+                     "(hora_inicio >= ? AND hora_fin <= ?))";    
 
         // Preparar la consulta SQL con PreparedStatement
         ps = objeto_conexion.conectar().prepareStatement(query);
-        ps.setInt(1, idSalon);    // ID del salón
-        ps.setInt(2, idDia);      // ID del día de la semana
-        ps.setTime(3, horaInicio);  // Hora de inicio del nuevo horario
-        ps.setTime(4, horaInicio);  // Hora de inicio comparada con otros horarios
-        ps.setTime(5, horaFin);     // Hora de fin del nuevo horario
-        ps.setTime(6, horaFin);     // Hora de fin comparada con otros horarios
-        ps.setTime(7, horaInicio);  // Hora de inicio comparada con el rango completo
-        ps.setTime(8, horaFin);     // Hora de fin comparada con el rango completo
-
+        ps.setInt(1, idSalon);    
+        ps.setInt(2, idDia);      
+        ps.setTime(3, horaInicio);  
+        ps.setTime(4, horaInicio);  
+        ps.setTime(5, horaFin);     
+        ps.setTime(6, horaFin);     
+        ps.setTime(7, horaInicio);  
+        ps.setTime(8, horaFin);     
         // Ejecutar la consulta
         rs = ps.executeQuery();
 
@@ -1628,7 +1268,6 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
         JOptionPane.showMessageDialog(null, "Error al validar disponibilidad: " + e.getMessage());
         return false;
     } finally {
-        // Asegurarse de cerrar todos los recursos
         try {
             if (rs != null) rs.close();
             if (ps != null) ps.close();
@@ -1697,7 +1336,6 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
                 }
                 objetoConexion.cerrarConexion();
             } catch (SQLException e) {
-                // Manejo de la excepción
             }
         }
     }
@@ -1727,67 +1365,9 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
                 }
                 objetoConexion.cerrarConexion();
             } catch (SQLException e) {
-                // Manejo de la excepción
             }
         }
     }
-
-    /*public void fnt_actualizarHorario(JTextField txt_id_hor, JTextField txt_descripcionhor, JComboBox cmb_salonhor, JFormattedTextField txt_horainicio, JFormattedTextField txt_horafin) {
-        conexion objetoConexion = new conexion();
-        String consulta_actualizar = "UPDATE horario SET descripcion = ?, hora_inicio = ?, hora_fin = ?, id_salon = ? WHERE id_horario = ?";
-        PreparedStatement ps = null;
-
-        try {
-            ps = objetoConexion.conectar().prepareStatement(consulta_actualizar);
-            ps.setString(1, txt_descripcionhor.getText());
-
-            // Para hora_inicio y hora_fin
-            Time timeInicio = Time.valueOf(txt_horainicio.getText());
-            Time timeFin = Time.valueOf(txt_horafin.getText());
-
-            ps.setTime(2, timeInicio);
-            ps.setTime(3, timeFin);
-
-            // Para el salón
-            String selectedItem = cmb_salonhor.getSelectedItem().toString();
-            int opcSalon = 0;
-            switch (selectedItem) {
-                case "P101" ->
-                    opcSalon = 101;
-                case "P102" ->
-                    opcSalon = 102;
-                case "P103" ->
-                    opcSalon = 103;
-                case "P104" ->
-                    opcSalon = 104;
-                case "B105" ->
-                    opcSalon = 105;
-                case "B106" ->
-                    opcSalon = 106;
-                case "B107" ->
-                    opcSalon = 107;
-                case "C108" ->
-                    opcSalon = 108;
-                default ->
-                    JOptionPane.showMessageDialog(null, "La selección no existe en la base de datos");
-            }
-            ps.setInt(4, opcSalon);
-            ps.setInt(5, Integer.parseInt(txt_id_hor.getText()));
-
-            ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Se actualizó el horario correctamente");
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al actualizar: " + e.getMessage());
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                objetoConexion.cerrarConexion();
-            } catch (SQLException e) {
-            }
-        }
-    }*/
     
     public void fnt_actualizarHorario(JTextField txt_id_hor, JTextField txt_descripcionhor, JComboBox cmb_salonhor, JFormattedTextField txt_horainicio, JFormattedTextField txt_horafin, JComboBox cmb_dia) {
     conexion objetoConexion = new conexion();
@@ -1841,13 +1421,12 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
             } else{
         ps = objetoConexion.conectar().prepareStatement(consulta_actualizar);
         
-        // Establecer los parámetros en la consulta
-        ps.setString(1, descripcion);  // Descripción
-        ps.setString(2, horaInicio);  // Hora de inicio
-        ps.setString(3, horaFin);     // Hora de fin
-        ps.setInt(4, idSalon);        // ID del salón
+        ps.setString(1, descripcion);  
+        ps.setString(2, horaInicio);  
+        ps.setString(3, horaFin);     
+        ps.setInt(4, idSalon);        
         ps.setInt(5, fnt_consultaID("id_dia", "dia_semana", "nombre", (String)cmb_dia.getSelectedItem()));
-        ps.setInt(6, idHorario);      // ID del horario
+        ps.setInt(6, idHorario);      
         
         // Ejecutar la actualización
         int filasAfectadas = ps.executeUpdate();
@@ -1935,21 +1514,19 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
             cmb_salonhor.setSelectedItem(salonStr);
             
             cmb_dia.setSelectedItem( rs.getString("nombre"));
-            // Recupera el nombre del día de la semana desde la tabla 'dia_semana'
             String diaSemana = rs.getString("nombre");
             JOptionPane.showMessageDialog(null, "Horario encontrado exitosamente para " + diaSemana);
         } else {
-            // Si no se encuentra el horario, muestra un mensaje de advertencia y limpia los campos
             JOptionPane.showMessageDialog(null, "No se encontró ningún horario con ese ID",
                                           "No encontrado", JOptionPane.WARNING_MESSAGE);
             limpiarCamposHorario(txt_id_hor, txt_descripcionhor, cmb_salonhor, txt_horainicio, txt_horafin);
         }
     } catch (NumberFormatException e) {
-        // Si el formato del ID no es válido, muestra un mensaje de error
+       
         JOptionPane.showMessageDialog(null, "El ID debe ser un número válido",
                                       "Error de formato", JOptionPane.ERROR_MESSAGE);
     } catch (SQLException e) {
-        // Maneja los errores de la base de datos
+        
         JOptionPane.showMessageDialog(null, "Error al buscar: " + e.getMessage(),
                                       "Error de base de datos", JOptionPane.ERROR_MESSAGE);
     } finally {
@@ -1968,106 +1545,6 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
     }
 }
 
-
-   /* public void fnt_pdfUsuario() throws FileNotFoundException {
-        Document documento = new Document();
-        try {
-            // Mostrar un JFileChooser para que el usuario elija la ubicación y nombre del archivo
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Guardar Reporte");
-            fileChooser.setSelectedFile(new File("Reporte_Usuarios.pdf"));
-
-            // Filtrar solo archivos PDF
-            fileChooser.setAcceptAllFileFilterUsed(false);
-            fileChooser.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Archivos PDF", "pdf"));
-
-            int userSelection = fileChooser.showSaveDialog(null);
-
-            // Si el usuario selecciona "Guardar"
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                File archivo = fileChooser.getSelectedFile();
-
-                // Si el archivo no tiene la extensión .pdf, agregarla
-                if (!archivo.getAbsolutePath().endsWith(".pdf")) {
-                    archivo = new File(archivo.getAbsolutePath() + ".pdf");
-                }
-
-                // Crear el escritor de PDF con la ruta seleccionada por el usuario
-                PdfWriter.getInstance(documento, new FileOutputStream(archivo));
-                documento.open();
-
-                // Encabezado
-                Paragraph encabezado = new Paragraph("Politécnico Colombiano Jaime Isaza Cadavid",
-                        new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
-                encabezado.setAlignment(Element.ALIGN_CENTER);
-                documento.add(encabezado);
-
-                // Logo de la institución
-                Image logo = null;
-                try {
-                    logo = Image.getInstance("./Logo_Poli.png");
-                } catch (BadElementException | IOException ex) {
-                    Logger.getLogger(frm_reportes.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                if (logo != null) {
-                    logo.scaleToFit(50, 50);
-                    logo.setAlignment(Element.ALIGN_CENTER);
-                    documento.add(logo);
-                }
-                documento.add(Chunk.NEWLINE);
-
-                Paragraph encabezado1 = new Paragraph("Listado de Usuarios",
-                        new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
-                encabezado1.setAlignment(Element.ALIGN_CENTER);
-                documento.add(encabezado1);
-                documento.add(Chunk.NEWLINE);
-                PdfPTable tabla = new PdfPTable(8);
-                tabla.addCell("Documento");
-                tabla.addCell("Nombre");
-                tabla.addCell("Apellido");
-                tabla.addCell("Fecha_Nacimiento");
-                tabla.addCell("Sexo");
-                tabla.addCell("Municipio");
-                tabla.addCell("Telefono");
-                tabla.addCell("Rol");
-                try {
-                    modelo.conexion conexion1 = new modelo.conexion();
-
-                    // Realizamos la consulta con el JOIN para obtener la descripción del sexo, municipio y rol
-                    PreparedStatement pst = conexion1.conectar().prepareStatement(
-                            "SELECT u.id_usuario, u.nombre, u.apellido, u.fecha_nac, s.descripcion_sexo, m.descripcion_municipio, u.telefono, r.descripcion_rol"
-                            + "FROM usuario u "
-                            + "JOIN sexo s ON u.id_sexo = s.id_sexo "
-                            + "JOIN municipio m ON u.id_municipio = m.id_municipio "
-                            + "JOIN rol r ON u.id_rol = r.id_rol"
-                    );
-
-                    ResultSet rs = pst.executeQuery();
-
-                    if (rs.next()) {
-                        do {
-                            tabla.addCell(rs.getString("id_usuario"));
-                            tabla.addCell(rs.getString("nombre"));
-                            tabla.addCell(rs.getString("apellido"));
-                            tabla.addCell(rs.getString("fecha_nac"));
-                            tabla.addCell(rs.getString("descripcion_sexo"));
-                            tabla.addCell(rs.getString("descripcion_municipio"));
-                            tabla.addCell(rs.getString("telefono"));
-                            tabla.addCell(rs.getString("descripcion_rol"));
-                        } while (rs.next());
-                        documento.add(tabla);
-                    }
-
-                } catch (DocumentException | SQLException e) {
-                }
-                documento.close();
-                JOptionPane.showMessageDialog(null, "Reporte Generado correctamente en: " + archivo.getAbsolutePath());
-            }
-
-        } catch (DocumentException | HeadlessException e) {
-            JOptionPane.showMessageDialog(null, "Error al crear el archivo PDF.");
-        }
-    }*/
    
    public void fnt_pdfUsuario() throws FileNotFoundException {
     Document documento = new Document();
@@ -2801,7 +2278,7 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
     public Date fnt_fechaActual(JTextField txt_fecha) {
         try {
             Date fecha = new Date();
-            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");  // nota: 'yyyy' en minúscula
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");  
             txt_fecha.setText(formatoFecha.format(fecha));
             txt_fecha.setEditable(false);  // opcional, para evitar que modifiquen la fecha
         } catch (Exception e) {
@@ -2848,7 +2325,7 @@ public void mostrarHorario(JComboBox cmb_horarioasignacion, JTextField dia) {
             + "JOIN docente d ON ha.id_docente = d.id_docente "
             + "JOIN asignatura a ON ha.id_asignatura = a.id_asignatura "
             + "JOIN usuario u ON r.id_usuario = u.id_usuario "
-            + "WHERE r.fecha = ?";  // Filtrar por la fecha de hoy
+            + "WHERE r.fecha = ?";  
 
     conexion objetoConexion = new conexion();
     try (Connection conn = objetoConexion.conectar(); PreparedStatement ps = conn.prepareStatement(query)) {
@@ -2907,8 +2384,8 @@ private void actualizarHoraSalida(int idRegistro, String nuevaHoraSalida) throws
     
     try (Connection conn = new conexion().conectar(); 
          PreparedStatement ps = conn.prepareStatement(query)) {
-        ps.setString(1, nuevaHoraSalida);  // Nueva hora de salida
-        ps.setInt(2, idRegistro);  // ID del registro a actualizar
+        ps.setString(1, nuevaHoraSalida);  
+        ps.setInt(2, idRegistro);  
         ps.executeUpdate();
     }
 }
@@ -2917,21 +2394,21 @@ private void actualizarHoraSalida(int idRegistro, String nuevaHoraSalida) throws
     
     public void guardarCambios(JTable tabla) {
     DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-    boolean cambiosRealizados = false;  // Bandera para saber si hubo cambios
+    boolean cambiosRealizados = false;  
     
     // Recorrer todas las filas de la tabla y actualizar el campo hora_salida
     for (int i = 0; i < modelo.getRowCount(); i++) {
-        int idRegistro = (int) modelo.getValueAt(i, 0);  // ID del registro
-        Date fecha = (Date) modelo.getValueAt(i, 3);    // Fecha del registro
-        String horaLlegada = (String) modelo.getValueAt(i, 4);  // Hora de llegada
-        String horaSalida = (String) modelo.getValueAt(i, 5);  // Hora de salida editada
-        String observacion = (String) modelo.getValueAt(i, 7);  // Observación
+        int idRegistro = (int) modelo.getValueAt(i, 0);  
+        Date fecha = (Date) modelo.getValueAt(i, 3);    
+        String horaLlegada = (String) modelo.getValueAt(i, 4);  
+        String horaSalida = (String) modelo.getValueAt(i, 5);  
+        String observacion = (String) modelo.getValueAt(i, 7);  
         
         // Verificar si el campo hora_salida fue editado
         if (horaSalida != null && !horaSalida.isEmpty()) {
-            // Actualizar el campo hora_salida en la base de datos
+            
             actualizarHoraSalida(idRegistro, fecha, horaSalida);
-            cambiosRealizados = true;  // Marcar que hubo un cambio
+            cambiosRealizados = true;  
         }
     }
     
@@ -2951,67 +2428,21 @@ private void actualizarHoraSalida(int idRegistro, String nuevaHoraSalida) throws
         // Convertir la hora de String a java.sql.Time
         if (horaSalida != null && !horaSalida.isEmpty()) {
             SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-            java.util.Date horaUtil = timeFormat.parse(horaSalida);  // Parsear la hora
-            java.sql.Time horaSql = new java.sql.Time(horaUtil.getTime());  // Convertir a java.sql.Time
-            ps.setTime(1, horaSql);  // Establecer hora_salida como tipo TIME
+            java.util.Date horaUtil = timeFormat.parse(horaSalida);  
+            java.sql.Time horaSql = new java.sql.Time(horaUtil.getTime());  
+            ps.setTime(1, horaSql);  
         } else {
-            ps.setNull(1, java.sql.Types.TIME);  // Establecer hora_salida como NULL
+            ps.setNull(1, java.sql.Types.TIME);  
         }
 
-        ps.setInt(2, idRegistro);     // ID del registro
-        ps.setDate(3, new java.sql.Date(fecha.getTime()));  // Fecha del registro
+        ps.setInt(2, idRegistro);     
+        ps.setDate(3, new java.sql.Date(fecha.getTime())); 
         
         ps.executeUpdate();
     } catch (SQLException | ParseException e) {
         JOptionPane.showMessageDialog(null, "Error al actualizar el registro: " + e.getMessage());
-        // Para depuración
     }
 }
-
-
-
-    /*public static void guardarRegistro(String documento, String asignatura, String horaEntrada, String horaSalida, String idUsuario, String observacion, String fechaTexto) throws ParseException {
-        conexion objetoConexion = new conexion();
-        String queryDocenteId = "SELECT id_docente FROM docente WHERE id_docente = ?";
-        String queryAsignaturaId = "SELECT ha.id_hor_asi FROM horario_asignatura ha "
-                + "JOIN asignatura a ON ha.id_asignatura = a.id_asignatura "
-                + "JOIN docente d ON ha.id_docente = d.id_docente "
-                + "WHERE d.id_docente = ? AND a.descripcion = ?";
-        String insertRegistroDocente = "INSERT INTO registro_docente (id_hor_asi, fecha, hora_llegada, hora_salida, id_usuario, observacion) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
-
-        try {
-            int idHorAsi = -1;
-            try (PreparedStatement psAsignatura = objetoConexion.conectar().prepareStatement(queryAsignaturaId)) {
-                psAsignatura.setString(1, documento);
-                psAsignatura.setString(2, asignatura);
-                ResultSet rsAsignatura = psAsignatura.executeQuery();
-
-                if (rsAsignatura.next()) {
-                    idHorAsi = rsAsignatura.getInt("id_hor_asi");
-                } else {
-                    JOptionPane.showMessageDialog(null, "No se encontró la asignatura para este docente.");
-                    return;
-                }
-            }
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            java.util.Date fechaUtil = sdf.parse(fechaTexto);
-            java.sql.Date fechaSql = new java.sql.Date(fechaUtil.getTime());
-
-            try (PreparedStatement psInsertar = objetoConexion.conectar().prepareStatement(insertRegistroDocente)) {
-                psInsertar.setInt(1, idHorAsi);
-                psInsertar.setDate(2, fechaSql);
-                psInsertar.setString(3, horaEntrada);
-                psInsertar.setString(4, horaSalida);
-                psInsertar.setString(5, idUsuario);
-                psInsertar.setString(6, observacion);
-                psInsertar.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Registro guardado exitosamente.");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage());
-        }
-    }*/
     
     public static void guardarRegistro(String documento, String asignatura, String horaEntrada, String horaSalida, String observacion, String fechaTexto) throws ParseException {
     conexion objetoConexion = new conexion();
@@ -3051,14 +2482,14 @@ private void actualizarHoraSalida(int idRegistro, String nuevaHoraSalida) throws
 
             // Verificar si horaSalida está vacía o es null
             if (horaSalida == null || horaSalida.isEmpty()) {
-                psInsertar.setNull(4, java.sql.Types.TIME);  // Establecer hora_salida como NULL
+                psInsertar.setNull(4, java.sql.Types.TIME);  
             } else {
-                psInsertar.setString(4, horaSalida);  // Insertar hora_salida si tiene valor
+                psInsertar.setString(4, horaSalida);  
             }
 
             // Obtener el id_usuario de la sesión
             String idUsuario = Session.getIdUsuario();
-            psInsertar.setString(5, idUsuario);  // Establecer el id_usuario automáticamente
+            psInsertar.setString(5, idUsuario);  
             psInsertar.setString(6, observacion);
 
             psInsertar.executeUpdate();
@@ -3068,72 +2499,6 @@ private void actualizarHoraSalida(int idRegistro, String nuevaHoraSalida) throws
         JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage());
     }
 }
-
-
-   /* public static void actualizarRegistroSalida(String documento, String asignatura, String horaSalida, String fechaTexto) throws ParseException {
-    conexion objetoConexion = new conexion();
-    
-    // Consulta para obtener el ID de la asignatura y docente
-    String queryAsignaturaId = "SELECT ha.id_hor_asi FROM horario_asignatura ha "
-            + "JOIN asignatura a ON ha.id_asignatura = a.id_asignatura "
-            + "JOIN docente d ON ha.id_docente = d.id_docente "
-            + "WHERE d.id_docente = ? AND a.descripcion = ?";
-    
-    // Consulta de actualización solo para el campo hora_salida
-    String updateHoraSalida = "UPDATE registro_docente SET hora_salida = ? "
-            + "WHERE id_hor_asi = ? AND fecha = ?";
-    
-    try {
-        int idHorAsi = -1;
-        
-        // Obtener el ID del horario de asignatura
-        try (PreparedStatement psAsignatura = objetoConexion.conectar().prepareStatement(queryAsignaturaId)) {
-            psAsignatura.setString(1, documento);    // Se pasa el documento
-            psAsignatura.setString(2, asignatura);   // Se pasa la asignatura
-            ResultSet rsAsignatura = psAsignatura.executeQuery();
-
-            if (rsAsignatura.next()) {
-                idHorAsi = rsAsignatura.getInt("id_hor_asi");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontró la asignatura para este docente.");
-                return;
-            }
-        }
-
-        // Parsear la fecha
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        java.util.Date fechaUtil = sdf.parse(fechaTexto);
-        java.sql.Date fechaSql = new java.sql.Date(fechaUtil.getTime());
-
-        // Preparar la actualización de hora_salida
-        try (PreparedStatement psActualizar = objetoConexion.conectar().prepareStatement(updateHoraSalida)) {
-            // Verificar si horaSalida está vacía o es null
-            if (horaSalida == null || horaSalida.isEmpty()) {
-                psActualizar.setNull(1, java.sql.Types.TIME);  // Establecer hora_salida como NULL
-            } else {
-                // Convertir la hora de String a java.sql.Time
-                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");  // Formato de hora: 24 horas, solo hora y minuto
-                java.util.Date horaUtil = timeFormat.parse(horaSalida);  // Parsear la hora
-                java.sql.Time horaSql = new java.sql.Time(horaUtil.getTime());  // Convertir a java.sql.Time
-                psActualizar.setTime(1, horaSql);  // Establecer hora_salida como tipo TIME
-            }
-
-            // Establecer el id_hor_asi y la fecha para la actualización
-            psActualizar.setInt(2, idHorAsi);  // Se pasa correctamente el ID de horario asignatura
-            psActualizar.setDate(3, fechaSql); // Se pasa correctamente la fecha
-
-            // Ejecutar la actualización
-            int filasAfectadas = psActualizar.executeUpdate();
-            if (filasAfectadas > 0) {
-                JOptionPane.showMessageDialog(null, "Hora de salida actualizada exitosamente.");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se encontró el registro para actualizar.");
-            }
-        }
-    } catch (SQLException | ParseException e) {
-        JOptionPane.showMessageDialog(null, "Error al actualizar la hora de salida: " + e.getMessage());
-    }
-    }*/
     
     public static void actualizarHoraSalida(String documento, String asignatura, String horaSalida, String fechaTexto) throws ParseException {
     conexion objetoConexion = new conexion();
